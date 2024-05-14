@@ -1,0 +1,22 @@
+header{
+    background-color: royalblue;
+
+    .header-nav{
+        display: flex;
+        
+        .nav-link{
+            text-decoration: none;
+            padding: 1rem;
+            color: antiquewhite;
+            
+            &.active{
+                color: antiquewhite;
+                text-shadow: 0 0 2px white; 
+            }
+
+            &:hover{
+                background-color: rgb(34, 83, 232);
+            }
+        }
+    }
+}
