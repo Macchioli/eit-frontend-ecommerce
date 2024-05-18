@@ -1,6 +1,17 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import removeDecimals from '../../services/utils/FormatNumber'
 import './ProductCard.css'
+import { faCartShopping, faCircleInfo, faEye, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { useOrder } from '../../context/OrderContext'
+
 
 export default function ProductCard({product}){
+
+
+    /* const { addOrderItem } = useOrder();
+    addOrderItem();  *//* Prueba de contexto en este componente */
+
+    const {addOrderItem} = useOrder();
 
     return(
         
@@ -11,8 +22,8 @@ export default function ProductCard({product}){
                             {/* <!-- Imagen e iconos --> */}
                             <img className="card-img card-image-1" src={product.image} alt="scratch principal" />
                             <div className="actions">
-                                <i className=" fa-regular fa-heart"></i>
-                                <i className=" fa-regular fa-eye"></i>
+                                <FontAwesomeIcon icon={faHeart} />
+                                <FontAwesomeIcon icon={faEye} />
                             </div>
                         </div>
                         <div className="card-main">
@@ -21,20 +32,24 @@ export default function ProductCard({product}){
                                 <h4 className="card-category">{product.name}</h4>
                                 <span className="card-date">01/03/2024</span>
                             </div>
-                            <h3 className="card-title">Scratch para Docentes</h3>
+                            <h3 className="card-title">{product.name}</h3>
                             <p className="card-description">{product.description} </p>
                             <div className="card-price">
-                                <span className="price"><small>$</small>17300</span>
-                                <span className="normal-price"><small>$</small>21625</span>
+                                <span className="price"><small>$</small>
+                                    {removeDecimals(product.price * 0.9)}
+                                </span>
+                                <span className="normal-price"><small>$</small>
+                                    {removeDecimals(product.price)}
+                                </span>
                             </div>
                         </div>
                         <div className="card-footer">
-                            <button className="add-to-cart">
-                                Añadir <i className="fa-solid fa-cart-shopping"></i>
+                            <button className="add-to-cart" onClick={() => addOrderItem(product)}>
+                                Añadir <FontAwesomeIcon icon={faCartShopping} />
                             </button>
                             <a href="/pages/product-detail.html">
                                 <button className="more-info">
-                                    Más info<i className="fa-solid fa-circle-info"></i>
+                                    Más info <FontAwesomeIcon icon={faCircleInfo} />
                                 </button>
                             </a>
                         </div>

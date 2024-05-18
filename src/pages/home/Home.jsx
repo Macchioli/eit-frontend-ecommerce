@@ -3,6 +3,10 @@ import ProductList from "../../components/product-list/ProductList";
 
 export default function Home(){
 
+    // console.log(useOrder()) 
+    /* const {order } = useOrder();
+    console.log(order) */
+
     return (
         <>
             <h1>Principal</h1>
@@ -21,6 +25,7 @@ export default function Home(){
             </div> */}
 
             <ProductList />
+
         </>
     )
 }
