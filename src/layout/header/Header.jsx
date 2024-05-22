@@ -1,9 +1,13 @@
 import { NavLink } from 'react-router-dom';
 import './Header.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { useOrder } from '../../context/OrderContext';
 
 export default function Header(){
 
     const isAdmin = true;
+    const {toggleSidebarOrder} = useOrder();
 
     return (
 
@@ -29,6 +33,10 @@ export default function Header(){
                     )}
 
                 </nav>
+
+                <div className="user-info">
+                    <FontAwesomeIcon icon={faCartShopping} onClick={()=>toggleSidebarOrder()}/>
+                </div>
             </header>
         </>
 

@@ -45,6 +45,16 @@
   margin: 0 auto;
 }
 
+.admin-form-container{
+    display: flex;
+
+    .admin-form{
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
 /* ? MEDIAS QUERIES */
 @media screen and (width > 640px){
   .table-container{

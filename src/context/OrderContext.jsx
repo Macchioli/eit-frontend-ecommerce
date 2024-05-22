@@ -1,7 +1,9 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const OrderContext = createContext() /* Me provee react para crear el contexto */
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useOrder = () => useContext(OrderContext) /* Hook de react a partir de la variable que le decimos que cree un contexto (OrderContext) */
 
 export const OrderProvider = ({children}) =>{ /* Componente que me brinda ciertos servicios a partir del hijo que recibo */
@@ -24,11 +26,17 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
         },
         {
             id:300,
-            name: 'Nintendo Switch',
+            name: 'Nintendo Switch con un texto super extenso con más de 3 lineas de extensión y que debo truncar',
             price: 1200,
             quantity: 3
         }
     ])
+
+    const [sidebarToggle, setSidebarToggle] = useState(false)
+
+    useEffect(()=>{
+        calculateTotal();
+    }, [order]) /* Uso de un efecto cuando un elemento ha sido actualizado Lo que digo aca es que se actualice en base a "order". Alguien hizo set order? ejecutamos nuevamente la función una vez que el elemento se pinto */
 
     const [total, setTotal] = useState(0)
 
@@ -50,11 +58,20 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
 
     function addOrderItem(producto){
 
-       producto.quantity = 1;
+       // Buscar en la orden si existe el producto y si existe añadimos 1 a quantity
+       // Si no existe lo añadimos al array
 
-       setOrder([...order, producto]) /* Un array nuevo con todo lo que esta en order mas el producto que recibo */
+       const product = order.find(prod => prod.id === producto.id) 
+       
+       if(product){
+        handleChanqeQuantity(product.id, product.quantity + 1)
+       }
+       else{
+        producto.quantity = 1;
 
-       calculateTotal();
+        setOrder([...order, producto]) /* Un array nuevo con todo lo que esta en order mas el producto que recibo */
+        }        
+
     }
 
     //Function remover elemento de la carta
@@ -63,8 +80,59 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
 
     //Toggle sidebar
 
+
+    /* Funcion para manejar los cambios de cantidad */
+
+    function handleChanqeQuantity(id, quantity){
+        
+
+        // Buscar el producto por su id
+
+        // Cambiar la cantidad
+        
+        //Actualizar mi estado orders
+
+        const updatedOrder = order.map(item => {
+
+            if(item.id === id) {
+
+                item.quantity = quantity;
+            }
+
+            return item;
+        })
+
+        setOrder(updatedOrder);
+
+    }
+
+    /* Función para quitar elemento de mi order */
+
+    function removeItem(id){
+
+        Swal.fire({
+            title: 'Borrar producto',
+            text: '¿Realmente desea quitar este producto?',
+            icon: "warning",
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Borrar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then(result => {
+            if(result.isConfirmed){
+                const updOrder = order.filter(prod => prod.id !== id) /* Todos los productos devuelve menos cuando el id del producto es distinto al recibido (el que quiero eliminar) ya que devuelve false */
+                setOrder(updOrder);
+            }
+        })
+    }
+
+    function toggleSidebarOrder(){
+        setSidebarToggle(!sidebarToggle)
+    }
+
     return(
-        <OrderContext.Provider value={{ order, addOrderItem, total }} >
+        <OrderContext.Provider value={{ order, addOrderItem, total, handleChanqeQuantity, removeItem, toggleSidebarOrder, sidebarToggle }} >
 
             {children}
 
