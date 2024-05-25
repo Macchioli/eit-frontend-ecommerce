@@ -29,5 +29,27 @@ header{
         color: white;
         padding-inline: 1rem;
         cursor: pointer;
+
+        .user-cart-container{
+            position: relative;
+
+            &.show-circle{
+                &::before{
+                    content: attr(data-count); /* le damos atributo para que tome un data-count */
+                    position: absolute;
+                    top: -10px;
+                    right: -10px;
+                    background-color: red;
+                    color:white;
+                    border-radius: 50%;
+                    width: 22px;
+                    height: 22px;
+                    font-size: .75rem;
+                    align-content: center;
+                    text-align: center;
+                }
+            }
+
+        }
     }
 }

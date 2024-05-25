@@ -32,10 +32,14 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
         }
     ])
 
+    const [count, setCount] = useState(0); /* Asigno un estado de count inicializado en 0 */
+
     const [sidebarToggle, setSidebarToggle] = useState(false)
 
     useEffect(()=>{
         calculateTotal();
+
+        calculateCount();
     }, [order]) /* Uso de un efecto cuando un elemento ha sido actualizado Lo que digo aca es que se actualice en base a "order". Alguien hizo set order? ejecutamos nuevamente la función una vez que el elemento se pinto */
 
     const [total, setTotal] = useState(0)
@@ -52,6 +56,13 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
         })
 
         setTotal(totalCount)
+    }
+
+    function calculateCount(){
+        let count = 0;
+        order.forEach((prod)=> count += prod.quantity)
+
+        setCount(count);
     }
 
     //Function Agregar producto
@@ -96,7 +107,7 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
 
             if(item.id === id) {
 
-                item.quantity = quantity;
+                item.quantity = +quantity;/* Pongo el + para tomarlo transformarlo como número */
             }
 
             return item;
@@ -132,7 +143,7 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
     }
 
     return(
-        <OrderContext.Provider value={{ order, addOrderItem, total, handleChanqeQuantity, removeItem, toggleSidebarOrder, sidebarToggle }} >
+        <OrderContext.Provider value={{ order, addOrderItem, total, handleChanqeQuantity, removeItem, toggleSidebarOrder, sidebarToggle, count }} >
 
             {children}
 

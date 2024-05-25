@@ -7,7 +7,7 @@ import { useOrder } from '../../context/OrderContext';
 export default function Header(){
 
     const isAdmin = true;
-    const {toggleSidebarOrder} = useOrder();
+    const {toggleSidebarOrder, count} = useOrder();
 
     return (
 
@@ -35,7 +35,12 @@ export default function Header(){
                 </nav>
 
                 <div className="user-info">
-                    <FontAwesomeIcon icon={faCartShopping} onClick={()=>toggleSidebarOrder()}/>
+                    <div className={`user-cart-container ${count < 1 ? '' : 'show-circle'}`} data-count={count}>
+                        <FontAwesomeIcon 
+                        className='user-cart'
+                        icon={faCartShopping} 
+                        onClick={()=>toggleSidebarOrder()}/>
+                    </div>
                 </div>
             </header>
         </>
