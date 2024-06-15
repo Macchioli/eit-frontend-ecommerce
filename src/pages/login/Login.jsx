@@ -1,22 +1,22 @@
+import { useForm } from 'react-hook-form';
 import './Login.css'
+import { useUser } from '../../context/UserContext';
 
 // const URL = "https://663ebeffe3a7c3218a4b47e7.mockapi.io/";
 
+const URL = import.meta.env.VITE_SERVER_URL;
+
 export default function Login(){
 
-	function handleLoginSubmit(evt){
+	const {login} = useUser();
+
+	const {register, handleSubmit} = useForm()
+
+	console.log(URL)
+
+	function onLogin(data){
 		
-		evt.preventDefault();
-		//Prevenir comportamiento por defecto.
-
-		//Tomar datos del formulario
-
-		//Chequear si existe un usuario con dicho email y si existe chequear el pass del usr coincide con lo que la persona colocó en el login
-		try{
-			//Cambios en la lógica
-		}catch(error){
-			console.log(error)
-		}
+		login(data);
 	}
 
     return (
@@ -24,20 +24,18 @@ export default function Login(){
 			<div className="wave"></div>
 			<div className="wave"></div>
 			<div className="wave"></div>
-			<form className="login-form" onSubmit={handleLoginSubmit}>
+			<form className="login-form" onSubmit={handleSubmit(onLogin)}>
 				<h1>Ingresar</h1>
 				<label>Correo electrónico</label>
 				<input
-					name="email"
-					required
+					{...register("email", {required:true})}
 					type="text"
 					placeholder="Correo electrónico"
 				/>
 
 				<label>Contraseña</label>
 				<input
-					name="password"
-					required
+					{...register("password", {required:true, maxLength:20})}
 					type="password"
 					placeholder="Contraseña"
 				/>

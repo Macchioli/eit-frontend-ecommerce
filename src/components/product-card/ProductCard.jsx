@@ -3,6 +3,7 @@ import removeDecimals from '../../services/utils/FormatNumber'
 import './ProductCard.css'
 import { faCartShopping, faCircleInfo, faEye, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { useOrder } from '../../context/OrderContext'
+import { Link } from 'react-router-dom'
 
 
 export default function ProductCard({product}){
@@ -47,11 +48,11 @@ export default function ProductCard({product}){
                             <button className="add-to-cart" onClick={() => addOrderItem(product)}>
                                 Añadir <FontAwesomeIcon icon={faCartShopping} />
                             </button>
-                            <a href="/pages/product-detail.html">
+                            <Link to={`/product-detail/${product.id}`}>
                                 <button className="more-info">
                                     Más info <FontAwesomeIcon icon={faCircleInfo} />
                                 </button>
-                            </a>
+                            </Link>
                         </div>
                     </article>
                 </div>

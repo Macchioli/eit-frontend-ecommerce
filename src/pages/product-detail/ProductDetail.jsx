@@ -1,14 +1,40 @@
-/* import { useParams } from "react-router-dom";
- */
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+
+
+const URL = `https://663ebeffe3a7c3218a4b47e7.mockapi.io`;
+
 export default function ProductDetail(){
 
     /* const params = useParams(); */ /* Defino una variable params y le asigno el Hook que ofrece la libreria router-dom */
+    const [product, setProduct] = useState()
+    const {id} = useParams(); /* Desestructuro el useParams y guardo id */
 
-    // const {id} = useParams(); /* Desestructuro el useParams y guardo id */
+    useEffect(() => {
+        getProductById(id);
+    }, []);
+
+    async function getProductById(id){
+        
+        try {
+            const response = await axios.get(`${URL}/products/${id}`);
+            console.log(response.data)
+
+            setProduct(response.data)
+
+        } catch (error) {
+            console.log(error)
+        } 
+    }
+
+
+
 
     return (
+       /*  {!product ? <spinner /> : "Existe"} */
         <>
-            <h1>Product Detail</h1>
+            <h1>{product?.name}</h1>
         </>
     )
 }

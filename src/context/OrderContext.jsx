@@ -11,8 +11,10 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
 
     //Estado de la orden
 
-    const [order, setOrder] = useState([
-        {
+    const [order, setOrder] = useState(
+        JSON.parse(localStorage.getItem("order")) || []
+    )
+        /* {
             id:100,
             name: 'XBOX',
             price: 1000,
@@ -29,8 +31,8 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
             name: 'Nintendo Switch con un texto super extenso con más de 3 lineas de extensión y que debo truncar',
             price: 1200,
             quantity: 3
-        }
-    ])
+        } */
+     /* Arranco array vacio. Objetos puestos para iniciar en test. */
 
     const [count, setCount] = useState(0); /* Asigno un estado de count inicializado en 0 */
 
@@ -38,8 +40,9 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
 
     useEffect(()=>{
         calculateTotal();
-
         calculateCount();
+        // localStorage.setItem("order", JSON.stringify(order)) //Puedo hacerlo aquí en lugar de en cada modificación de order
+
     }, [order]) /* Uso de un efecto cuando un elemento ha sido actualizado Lo que digo aca es que se actualice en base a "order". Alguien hizo set order? ejecutamos nuevamente la función una vez que el elemento se pinto */
 
     const [total, setTotal] = useState(0)
@@ -81,6 +84,7 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
         producto.quantity = 1;
 
         setOrder([...order, producto]) /* Un array nuevo con todo lo que esta en order mas el producto que recibo */
+        localStorage.setItem("order", JSON.stringify([...order, producto]))
         }        
 
     }
@@ -114,6 +118,8 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
         })
 
         setOrder(updatedOrder);
+        localStorage.setItem("order", JSON.stringify(updatedOrder))
+
 
     }
 
@@ -134,6 +140,7 @@ export const OrderProvider = ({children}) =>{ /* Componente que me brinda cierto
             if(result.isConfirmed){
                 const updOrder = order.filter(prod => prod.id !== id) /* Todos los productos devuelve menos cuando el id del producto es distinto al recibido (el que quiero eliminar) ya que devuelve false */
                 setOrder(updOrder);
+                localStorage.setItem("order", JSON.stringify(updOrder))
             }
         })
     }

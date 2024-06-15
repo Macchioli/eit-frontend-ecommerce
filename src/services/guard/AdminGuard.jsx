@@ -1,8 +1,9 @@
 import { Navigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
 
 export default function AdminGuard({children}){ /* Desestructurando puedo recibir la prop children */
 
-    const isAdmin = true;
+    const {user} = useUser()
 
-    return isAdmin ? children : <Navigate to="/" replace />; /* replace reemplaza la ruta actual por la del navigate to */
+    return user?.role === "ADMIN_ROLE" ? children : <Navigate to="/" replace />; /* replace reemplaza la ruta actual por la del navigate to */
 }
