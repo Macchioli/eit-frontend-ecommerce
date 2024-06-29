@@ -66,6 +66,12 @@
               font-size: .75rem;
               color: royalblue;
             }
+
+            .select-input{
+                option{
+                    text-transform: capitalize;
+                }
+            }
       
             input,
             select,

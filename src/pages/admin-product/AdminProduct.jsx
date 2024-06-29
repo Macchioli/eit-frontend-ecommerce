@@ -7,19 +7,26 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import {useForm } from "react-hook-form"
 import { formatTimestampToInputDate } from "../../services/utils/FormatDate";
+import { useUser } from "../../context/UserContext";
 
-const URL = `https://663ebeffe3a7c3218a4b47e7.mockapi.io` //Base de donde esta mi servidor recomendado sin el endpoint
 
+
+// const URL = `https://663ebeffe3a7c3218a4b47e7.mockapi.io` //Base de donde esta mi servidor recomendado sin el endpoint
+const URL = import.meta.env.VITE_SERVER_URL 
 
 export default function AdminProduct(){
-
+    
     const [products, setProducts] = useState([]);
     const{register, handleSubmit, setValue , reset, formState: {errors}} = useForm()
-
+    
     const[isEditing, setIsEditing] = useState(false);
-
+    const {token} = useUser()
+    
+    const [categories, setCategories] = useState([])
+    
     useEffect(()=>{
         getProducts();
+        getCategories()
     }, [])
 
     async function getProducts(){
@@ -27,26 +34,52 @@ export default function AdminProduct(){
         // const URL = `https://6622ed703e17a3ac846e40e5.mockapi.io/api/products`
 
         try {
-            const response = await axios.get(`${URL}/products`);
+            const response = await axios.get(`http://localhost:3000/api/products`);
 
-            const productos = response.data;
-            setProducts(productos);
+            const {products} = response.data; /* Destructuro ya que la data viene en la sección productos */
+            setProducts(products);
 
         } catch (error) {
             console.log(error)
         }
     }
 
+    async function getCategories(){
+        try {
+            
+            const response = await axios.get(`http://localhost:3000/api/categories`)
 
+            console.log(response)
+
+            const categoriesDB = response.data.categories;
+
+            setCategories(categoriesDB)
+
+        } catch (error) {
+            console.log("Error al obtener categorias:", error)
+        }
+    }
 
     function onSubmit(data){
-        data.createdAt = new Date (data.createdAt).getTime();
-        data.price = +data.price;
+
+        const formData = new FormData(); /* Para que JS pueda enviar el archivo como tal debo partir desde FormData */
+
+        formData.append("id", data.id)
+        formData.append("name", data.name)
+        formData.append("price", +data.price)
+        formData.append("description", data.description)
+        formData.append("image", data.image.length ? data.image[0] : undefined)
+        formData.append("createdAt", new Date(data.createdAt).getTime())
+        formData.append("category", data.category)  /* Doy el valor correspondiente de forma manual */
+
+        // data.createdAt = new Date (data.createdAt).getTime();
+        // data.price = +data.price;
+        // data.image = data.image[0] /* Mando la posición que contiene la imagen que adjunté que es la que contiene efectivamente el archivo. */
 
         if(data.id){
-            updateProduct(data);
+            updateProduct(formData);
         }else{
-            createProduct(data)
+            createProduct(formData)
         } /* Entro al if si tiene un id ya que estaría editando */
 
     }
@@ -54,7 +87,12 @@ export default function AdminProduct(){
     async function createProduct(product){
         try {
             
-            const newProduct = await axios.post(`${URL}/products`, product)
+            const newProduct = await axios.post(`http://localhost:3000/api/products`, 
+                                                product,{
+                                                    headers:{
+                                                        Authorization: token
+                                                    }
+                                                })  /* Agrego encabezado con propiedad autorizacion con el token */
             getProducts();
             console.log(newProduct);
             reset();
@@ -66,7 +104,11 @@ export default function AdminProduct(){
     async function deleteProduct(id){
 
         try {
-            await axios.delete(`${URL}/products/${id}`)
+            await axios.delete(`http://localhost:3000/api/products/${id}`,{
+                headers:{
+                    Authorization: token
+                }
+            })
 
             getProducts();
 
@@ -76,10 +118,16 @@ export default function AdminProduct(){
         }
     }
 
-    async function updateProduct(product){
+    async function updateProduct(productFormData){
 
         try {
-            await axios.put(`${URL}/products/${product.id}`, product)
+            console.log("HOLA",productFormData)
+            const id = productFormData.get("id")
+            await axios.put(`${URL}/products/${id}`, productFormData, {
+                headers: {
+                    Authorization: token
+                }
+            })
 
             // Swal.fire de exito
             getProducts();
@@ -96,11 +144,11 @@ export default function AdminProduct(){
         setIsEditing(true)
 
         // Setear formulario con los datos de mi producto
-        setValue("id", producto.id);
+        setValue("id", producto._id);
         setValue("name", producto.name)
         setValue("price", producto.price)
-        setValue("image", producto.image)
-        setValue("category", producto.category)
+        // setValue("image", producto.image) /* Saco la imagen ya que no se va setear una nueva imagen(no se puede setear input file) si no se adjunta archivo */
+        setValue("category", producto.category._id)
         setValue("description", producto.description)
         setValue("createdAt", formatTimestampToInputDate(producto.createdAt))
     }
@@ -146,15 +194,17 @@ export default function AdminProduct(){
                     </div>
                     <div className="input-group">
                         <label htmlFor="">Imagen</label>
-                        <input type="url" {...register("image")} />
+                        <input type="file" accept="image/*" {...register("image")} /> {/* accept para que solo muestre imagenes el navegador de archivos */}
                     </div>
                     <div className="input-group">
                         <label htmlFor="">Categoria</label>
-                        <select {...register("category")}>
-                        <option value="running">Running</option>
-                        <option value="moda">Moda</option>
-                        <option value="sports">Deportes</option>
-                        <option value="mountain">Montaña</option>
+                        <select {...register("category")} className="select-input">
+                        {/* Obtenidas las categorias pinto con un map las diferentes opciones */}
+                        {
+                            categories.map(category => (
+                                <option value={category._id} key={category._id}>{category.viewValue}</option>
+                            ))
+                        }
                         </select>
                     </div>
                     <div className="input-group">
@@ -187,7 +237,7 @@ export default function AdminProduct(){
                         {products.map((product)=>(
                             <tr key={product.id}>
                                 <td className="image">
-                                    <img src={product.image} alt="" />
+                                    <img src={`http://localhost:3000/images/products/${product.image}`} alt="" />
                                 </td>
                                 <td className="name">
                                     <p>{product.name}</p>
@@ -202,7 +252,7 @@ export default function AdminProduct(){
                                     <button className="action-btn" onClick={() => handleEditProduct(product)}>
                                         <FontAwesomeIcon icon={faEdit}/>
                                     </button>
-                                    <button className="action-btn btn-danger" onClick={() => deleteProduct(product.id)}>
+                                    <button className="action-btn btn-danger" onClick={() => deleteProduct(product._id)}>
                                         <FontAwesomeIcon icon={faTrash}/>
                                     </button>
                                 </td>

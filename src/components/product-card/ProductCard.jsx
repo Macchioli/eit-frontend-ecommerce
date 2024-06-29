@@ -5,6 +5,7 @@ import { faCartShopping, faCircleInfo, faEye, faHeart } from '@fortawesome/free-
 import { useOrder } from '../../context/OrderContext'
 import { Link } from 'react-router-dom'
 
+const URL_IMAGES = import.meta.env.VITE_IMAGES_URL
 
 export default function ProductCard({product}){
 
@@ -21,7 +22,7 @@ export default function ProductCard({product}){
                     <article className="card">
                         <div className="card-header">
                             {/* <!-- Imagen e iconos --> */}
-                            <img className="card-img card-image-1" src={product.image} alt="scratch principal" />
+                            <img className="card-img card-image-1" src={`${URL_IMAGES}/products/${product.image}`} alt="scratch principal" />
                             <div className="actions">
                                 <FontAwesomeIcon icon={faHeart} />
                                 <FontAwesomeIcon icon={faEye} />
@@ -48,7 +49,7 @@ export default function ProductCard({product}){
                             <button className="add-to-cart" onClick={() => addOrderItem(product)}>
                                 Añadir <FontAwesomeIcon icon={faCartShopping} />
                             </button>
-                            <Link to={`/product-detail/${product.id}`}>
+                            <Link to={`/product-detail/${product._id}`}>
                                 <button className="more-info">
                                     Más info <FontAwesomeIcon icon={faCircleInfo} />
                                 </button>

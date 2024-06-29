@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import ProductCard from "../product-card/ProductCard";
 import axios from "axios";
 import './ProductList.css'
+import Pagination from "../pagination/Pagination";
 
-const URL = 'https://663ebeffe3a7c3218a4b47e7.mockapi.io';
+const URL = import.meta.env.VITE_SERVER_URL;
 
 export default function ProductList(){
 
@@ -16,13 +17,13 @@ export default function ProductList(){
     }, [])
     //Tomar los productos del back
 
-    async function getProducts(){
+    async function getProducts(page = 0){ /* Por defecto 0 pero si recibe la propiedad sera el valor recibido */
 
         try{
-            const responseAwait = await axios.get(`${URL}/products`)
-            const productsAPI = responseAwait.data;
+            const responseAwait = await axios.get(`${URL}/products?page=${page}`)
+            const {products} = responseAwait.data;
             
-            setProducts(productsAPI);
+            setProducts(products);
     
         }catch(error){
             console.log(error)
@@ -36,9 +37,11 @@ export default function ProductList(){
 
             <div className="card-container">
                 {
-                    products.map(prod => <ProductCard product={prod} key={prod.id} /> )/* No pongo llaves porque devuelvo un solo paquete */
+                    products.map(prod => <ProductCard product={prod} key={prod._id} /> )/* No pongo llaves porque devuelvo un solo paquete */
                 }
             </div>
+
+            <Pagination totalItems={50} loadPage={getProducts}/>
 
         </>
     )

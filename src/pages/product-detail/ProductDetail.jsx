@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 
-const URL = `https://663ebeffe3a7c3218a4b47e7.mockapi.io`;
+const URL = import.meta.env.VITE_SERVER_URL;
 
 export default function ProductDetail(){
 
@@ -20,8 +20,8 @@ export default function ProductDetail(){
         try {
             const response = await axios.get(`${URL}/products/${id}`);
             console.log(response.data)
-
-            setProduct(response.data)
+            const {product} = response.data
+            setProduct(product)
 
         } catch (error) {
             console.log(error)
